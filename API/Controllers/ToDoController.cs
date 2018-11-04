@@ -4,56 +4,82 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using Microsoft.AspNetCore.Mvc;
-
+using API.Models;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace API.Controllers
 {
-  [Route("api/[controller]")]
+  [Route("api/todo")]
+  [ApiController]
   public class ToDoController : ControllerBase
   {
     private readonly ToDoContext _context;
     public ToDoController(ToDoContext context)
     {
       _context = context;
-      //Ensures the data colection is never emptu
-      if (_context.ToDoItems.Count() == 0)
+    }
+
+
+    [HttpGet]
+    public ActionResult<List<ToDoItem>> GetAll()
+    {
+       return _context.ToDoItems.ToList();
+    }
+
+    [HttpGet("{id}", Name = "GetTodo")]
+    public ActionResult<ToDoItem> GetById(int id)
+    {
+      var item = _context.ToDoItems.Find(id);
+      if (item == null)
       {
-        _context.ToDoItems.Add(new Models.ToDoItem { Name = "Dummy Item" });
-        _context.SaveChanges();
+        return NotFound();
       }
-    }
-    [HttpGet]
-    // GET: api/<controller>
-    [HttpGet]
-    public IEnumerable<string> Get()
-    {
-      return new string[] { "value1", "value2" };
+      return item;
     }
 
-    // GET api/<controller>/5
-    [HttpGet("{id}")]
-    public string Get(int id)
-    {
-      return "value";
-    }
-
-    // POST api/<controller>
     [HttpPost]
-    public void Post([FromBody]string value)
+    public IActionResult Create(ToDoItem item)
     {
+      _context.ToDoItems.Add(item);
+      _context.SaveChanges();
+
+      return CreatedAtRoute("GetTodo", new { id = item.ID }, item);
     }
 
-    // PUT api/<controller>/5
     [HttpPut("{id}")]
-    public void Put(int id, [FromBody]string value)
+    public IActionResult Update(int id, ToDoItem Item)
     {
-    }
+      var todo = _context.ToDoItems.Find(id);
+      if (todo == null)
+      {
+        return NotFound();
+      }
 
-    // DELETE api/<controller>/5
+      todo.Name = Item.Name;
+      todo.Status = Item.Status;
+      todo.ListID = Item.ListID;
+
+      _context.ToDoItems.Update(todo);
+      _context.SaveChanges();
+      return NoContent();
+    }
+    /// <summary>
+    /// delete item at specified
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    public IActionResult Delete(int id)
     {
+      var todo = _context.ToDoItems.Find(id);
+      if (todo == null)
+      {
+        return NotFound();
+      }
+
+      _context.ToDoItems.Remove(todo);
+      _context.SaveChanges();
+      return NoContent();
     }
   }
 }
