@@ -19,13 +19,20 @@ namespace API.Controllers
       _context = context;
     }
 
-
+    /// <summary>
+    /// get everything
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public ActionResult<List<ToDoItem>> GetAll()
     {
        return _context.ToDoItems.ToList();
     }
-
+    /// <summary>
+    /// get item by id number
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}", Name = "GetTodo")]
     public ActionResult<ToDoItem> GetById(int id)
     {
@@ -45,7 +52,12 @@ namespace API.Controllers
 
       return CreatedAtRoute("GetTodo", new { id = item.ID }, item);
     }
-
+    /// <summary>
+    /// updates the specified item
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="Item"></param>
+    /// <returns></returns>
     [HttpPut("{id}")]
     public IActionResult Update(int id, ToDoItem Item)
     {

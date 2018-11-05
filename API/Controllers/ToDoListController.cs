@@ -96,7 +96,11 @@ namespace API.Controllers
       _context.SaveChanges();
       return NoContent();
     }
-
+    /// <summary>
+    /// deletes all items associated with list
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public IActionResult DeleteItems(int id)
     {
       var items = _context.ToDoItems.Where(ide => ide.ListID == id).ToList();
