@@ -1,4 +1,4 @@
-# Lab19-API
+# API template for ASP.NET Core
 
 ## Web API for a To Do List and To Do Tasks
 
